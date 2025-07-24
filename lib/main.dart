@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/add_note_screen.dart';
+import 'screens/add_text_note_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,9 +25,14 @@ class MyNotesApp extends StatelessWidget {
       ),
       initialRoute: '/login',
       routes: {
+        '/add_note':(context) => const AddNoteScreen(),
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
-         '/home': (context) => const HomeScreen(), // We'll add this later
+         '/home': (context) => const HomeScreen(),
+        '/add_text_note': (context) => const AddTextNoteScreen(),
+
+
+
       },
     );
   }
