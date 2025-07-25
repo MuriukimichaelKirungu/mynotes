@@ -5,6 +5,8 @@ import 'screens/register_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/add_note_screen.dart';
 import 'screens/add_text_note_screen.dart';
+import 'screens/add_photo_note_screen.dart';
+import 'screens/add_audio_note_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +32,9 @@ class MyNotesApp extends StatelessWidget {
         '/register': (context) => const RegisterScreen(),
          '/home': (context) => const HomeScreen(),
         '/add_text_note': (context) => const AddTextNoteScreen(),
+        '/add_photo_note': (context) => const AddPhotoNoteScreen(),
+        '/add_audio_note': (context) => const AddAudioNoteScreen(),
+
 
 
 
