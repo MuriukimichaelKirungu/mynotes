@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final VoidCallback toggleTheme;
+
+  const HomeScreen({Key? key, required this.toggleTheme}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -39,6 +41,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       appBar: AppBar(
         title: const Text("My Notes"),
         backgroundColor: Colors.deepPurple,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6),
+            onPressed: widget.toggleTheme,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -74,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 mini: true,
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  // TODO: Add audio note logic
+                  Navigator.pushNamed(context, '/add_audio_note');
                 },
                 child: const Icon(Icons.mic),
               ),
@@ -88,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 mini: true,
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  // TODO: Add photo note logic
+                  Navigator.pushNamed(context, '/add_photo_note');
                 },
                 child: const Icon(Icons.photo),
               ),
@@ -102,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 mini: true,
                 backgroundColor: Colors.deepPurple,
                 onPressed: () {
-                  // TODO: Navigate to add text note
+                  Navigator.pushNamed(context, '/add_text_note');
                 },
                 child: const Icon(Icons.note_add),
               ),

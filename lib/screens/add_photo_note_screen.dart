@@ -1,10 +1,9 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import '../services/storage_service.dart';
+import '../services/firestore_service.dart';
+import '../services/auth_service.dart';
 
 class AddPhotoNoteScreen extends StatefulWidget {
   const AddPhotoNoteScreen({super.key});
@@ -14,80 +13,56 @@ class AddPhotoNoteScreen extends StatefulWidget {
 }
 
 class _AddPhotoNoteScreenState extends State<AddPhotoNoteScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  File? _selectedImage;
-  bool _isUploading = false;
+  File? _image;
 
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
       setState(() {
-        _selectedImage = File(picked.path);
+        _image = File(pickedFile.path);
       });
     }
   }
 
-  Future<void> _savePhotoNote() async {
-    if (_selectedImage == null || _titleController.text.trim().isEmpty) return;
-    final user = FirebaseAuth.instance.currentUser;
+  Future<void> _uploadNote() async {
+    if (_image == null) return;
+
+    final user = AuthService().currentUser;
     if (user == null) return;
 
-    setState(() => _isUploading = true);
+    final url = await StorageService().uploadFile(_image!, 'photos');
 
-    try {
-      final ref = FirebaseStorage.instance
-          .ref('photos/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      await ref.putFile(_selectedImage!);
-      final url = await ref.getDownloadURL();
+    await FirestoreService().addTextNote(
+      userId: user.uid,
+      content: url,
+    );
 
-      await FirebaseFirestore.instance.collection('notes').add({
-        'title': _titleController.text.trim(),
-        'imageUrl': url,
-        'type': 'photo',
-        'createdAt': Timestamp.now(),
-        'userId': user.uid,
-      });
-
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error saving photo: $e')),
-      );
-    } finally {
-      setState(() => _isUploading = false);
-    }
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New Photo Note'),
-        backgroundColor: Colors.deepPurple,
-        actions: [
-          IconButton(
-            onPressed: _isUploading ? null : _savePhotoNote,
-            icon: const Icon(Icons.save),
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      appBar: AppBar(title: const Text('Add Photo Note')),
+      body: Center(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(hintText: 'Title'),
-            ),
-            const SizedBox(height: 16),
+            _image != null
+                ? Image.file(_image!, height: 200)
+                : const Text('No image selected.'),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
+              icon: const Icon(Icons.photo),
+              label: const Text('Pick Photo'),
               onPressed: _pickImage,
-              icon: const Icon(Icons.photo_library),
-              label: const Text('Pick Image'),
             ),
-            const SizedBox(height: 10),
-            if (_selectedImage != null)
-              Image.file(_selectedImage!, height: 200),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.upload),
+              label: const Text('Upload Note'),
+              onPressed: _uploadNote,
+            ),
           ],
         ),
       ),

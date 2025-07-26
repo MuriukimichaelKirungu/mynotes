@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../services/auth_service.dart';
+
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
 
@@ -37,10 +39,8 @@ class _RegisterScreenState extends State<RegisterScreen>
     final password = _passwordController.text.trim();
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      await AuthService().register(email, password);
+
       Navigator.pushReplacementNamed(context, '/login'); // Go back to login
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

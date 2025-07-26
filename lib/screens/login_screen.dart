@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../services/auth_service.dart';
+
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -37,10 +39,8 @@ class _LoginScreenState extends State<LoginScreen>
     final password = _passwordController.text.trim();
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      await AuthService().login(email, password);
+
       Navigator.pushReplacementNamed(context, '/home');
 
     } catch (e) {
