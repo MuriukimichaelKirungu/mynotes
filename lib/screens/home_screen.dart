@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -40,18 +41,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Notes"),
-        backgroundColor: Colors.deepPurple,
         actions: [
           IconButton(
             icon: const Icon(Icons.brightness_6),
             onPressed: widget.toggleTheme,
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacementNamed(context, '/login');
+            },
           ),
         ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(
-          itemCount: 10, // TODO: replace with real notes
+          itemCount: 10,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             mainAxisSpacing: 8,
@@ -65,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.deepPurple.shade100),
               ),
-              child: const Text("Note content..."), // Replace with actual content
+              child: const Text("Note content..."),
             );
           },
         ),
@@ -73,52 +80,44 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       floatingActionButton: Stack(
         alignment: Alignment.bottomRight,
         children: [
-          // Audio Note
           if (_isExpanded)
             Positioned(
               bottom: 180,
               child: FloatingActionButton(
                 heroTag: 'audio',
                 mini: true,
-                backgroundColor: Colors.deepPurple,
                 onPressed: () {
                   Navigator.pushNamed(context, '/add_audio_note');
                 },
                 child: const Icon(Icons.mic),
               ),
             ),
-          // Photo Note
           if (_isExpanded)
             Positioned(
               bottom: 120,
               child: FloatingActionButton(
                 heroTag: 'photo',
                 mini: true,
-                backgroundColor: Colors.deepPurple,
                 onPressed: () {
                   Navigator.pushNamed(context, '/add_photo_note');
                 },
                 child: const Icon(Icons.photo),
               ),
             ),
-          // Text Note
           if (_isExpanded)
             Positioned(
               bottom: 60,
               child: FloatingActionButton(
                 heroTag: 'text',
                 mini: true,
-                backgroundColor: Colors.deepPurple,
                 onPressed: () {
                   Navigator.pushNamed(context, '/add_text_note');
                 },
                 child: const Icon(Icons.note_add),
               ),
             ),
-          // Main FAB
           FloatingActionButton(
             heroTag: 'main',
-            backgroundColor: Colors.deepPurple,
             onPressed: _toggleFab,
             child: AnimatedIcon(
               icon: AnimatedIcons.menu_close,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
@@ -23,12 +24,11 @@ class MyNotesApp extends StatefulWidget {
 }
 
 class _MyNotesAppState extends State<MyNotesApp> {
-  ThemeMode _themeMode = ThemeMode.light;
+  bool _isDarkMode = false;
 
   void _toggleTheme() {
     setState(() {
-      _themeMode =
-      _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _isDarkMode = !_isDarkMode;
     });
   }
 
@@ -37,23 +37,21 @@ class _MyNotesAppState extends State<MyNotesApp> {
     return MaterialApp(
       title: 'My Notes',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light().copyWith(
+      theme: _isDarkMode ? ThemeData.dark() : ThemeData.light().copyWith(
         primaryColor: Colors.deepPurple,
-        colorScheme: ColorScheme.light(primary: Colors.deepPurple),
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+          backgroundColor: Colors.deepPurple,
+        ),
       ),
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.dark(primary: Colors.deepPurple),
-      ),
-      themeMode: _themeMode,
       initialRoute: '/login',
       routes: {
-        '/login': (context) => LoginScreen(),
-        '/register': (context) => RegisterScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/register': (context) => const RegisterScreen(),
         '/home': (context) => HomeScreen(toggleTheme: _toggleTheme),
-        '/add_note': (context) => AddNoteScreen(),
-        '/add_text_note': (context) => AddTextNoteScreen(),
-        '/add_photo_note': (context) => AddPhotoNoteScreen(),
-        '/add_audio_note': (context) => AddAudioNoteScreen(),
+        '/add_note': (context) => const AddNoteScreen(),
+        '/add_text_note': (context) => const AddTextNoteScreen(),
+        '/add_photo_note': (context) => const AddPhotoNoteScreen(),
+        '/add_audio_note': (context) => const AddAudioNoteScreen(),
       },
     );
   }
